@@ -51,4 +51,4 @@ This app is based on [Principles of Management](https://openstax.org/details/boo
 
 ## Model
 
-The app uses Anthropic's Claude (`claude-sonnet-4-20250514` by default). You can change the model in the `sendMessage()` function in `index.html`.
+The app uses Anthropic's Claude (`claude-sonnet-4-20250514` by default).
