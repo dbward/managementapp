@@ -53,5 +53,6 @@ This app is based on [Principles of Management](https://openstax.org/details/boo
 
 The app uses Anthropic's Claude (`claude-sonnet-4-20250514` by default).
 
-##Link to site
-https://dbward.github.io/managementapp/
+## Link to Site
+
+[Management Assistant](https://dbward.github.io/managementapp/)
