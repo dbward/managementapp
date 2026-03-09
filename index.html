@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Management Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --slate:      #334155;
+      --slate-lt:   #64748b;
+      --slate-bg:   #f1f5f9;
+      --navy:       #1e3a5f;
+      --navy-lt:    #3b6998;
+      --navy-bg:    #eff4f9;
+      --steel:      #475569;
+      --steel-lt:   #94a3b8;
+      --copper:     #92400e;
+      --copper-lt:  #d97706;
+      --copper-bg:  #fffbeb;
+      --sage:       #166534;
+      --sage-lt:    #4ade80;
+      --sage-bg:    #f0fdf4;
+      --text:       #1e293b;
+      --text-mid:   #334155;
+      --text-soft:  #64748b;
+      --bg:         #f8fafc;
+      --white:      #ffffff;
+      --border:     #cbd5e1;
+      --border-lt:  #e2e8f0;
+      --shadow:     rgba(30,58,95,0.10);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background-image:
+        radial-gradient(ellipse at 0% 0%, rgba(30,58,95,0.06) 0%, transparent 55%),
+        radial-gradient(ellipse at 100% 100%, rgba(22,101,52,0.05) 0%, transparent 55%);
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 780px;
+      background: var(--white);
+      border-radius: 20px;
+      box-shadow: 0 8px 40px var(--shadow), 0 1px 3px rgba(0,0,0,0.05);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 90vh;
+      border: 1px solid var(--border-lt);
+    }
+
+    /* ── Header ── */
+    .header {
+      background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 40%, #334155 100%);
+      padding: 22px 26px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: 30%;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.03);
+    }
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      margin-bottom: 8px;
+      position: relative; z-index: 1;
+    }
+    .header-icon {
+      width: 46px; height: 46px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .header-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.01em;
+    }
+    .header-subtitle {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 1px;
+      letter-spacing: 0.03em;
+    }
+    .header-badge {
+      margin-left: auto;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 20px;
+      padding: 4px 11px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.75);
+      letter-spacing: 0.05em;
+      backdrop-filter: blur(4px);
+    }
+    .header-desc {
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.78);
+      line-height: 1.55;
+      position: relative; z-index: 1;
+      max-width: 580px;
+    }
+
+    /* ── Chapter selector ── */
+    .chapter-panel {
+      padding: 14px 20px;
+      background: var(--navy-bg);
+      border-bottom: 1px solid var(--border-lt);
+    }
+    .chapter-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--navy);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .chapter-select-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .chapter-select {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      color: var(--text);
+      background: var(--white);
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+    .chapter-select:focus {
+      outline: none;
+      border-color: var(--navy-lt);
+      box-shadow: 0 0 0 3px rgba(30,58,95,0.08);
+    }
+    .chapter-hint {
+      font-size: 11px;
+      color: var(--text-soft);
+      margin-top: 6px;
+    }
+
+    /* ── Quick actions ── */
+    .quick-panel {
+      padding: 16px 20px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border-lt);
+    }
+    .quick-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--slate);
+      text-transform: uppercase;
+      margin-bottom: 11px;
+    }
+    .quick-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .quick-group h4 {
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .quick-group.concepts h4 { color: var(--navy); }
+    .quick-group.practice h4 { color: var(--sage); }
+
+    .quick-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 8px 11px;
+      border-radius: 10px;
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: left;
+      transition: all 0.15s ease;
+      margin-bottom: 6px;
+    }
+    .quick-btn:last-child { margin-bottom: 0; }
+    .quick-btn.concepts {
+      background: var(--navy-bg);
+      color: var(--navy);
+      border-color: #c7d6e6;
+    }
+    .quick-btn.concepts:hover {
+      background: #dde7f1;
+      border-color: var(--navy-lt);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(30,58,95,0.12);
+    }
+    .quick-btn.practice {
+      background: var(--sage-bg);
+      color: var(--sage);
+      border-color: #bbf7d0;
+    }
+    .quick-btn.practice:hover {
+      background: #dcfce7;
+      border-color: var(--sage-lt);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(22,101,52,0.12);
+    }
+    .quick-btn .btn-icon { font-size: 15px; flex-shrink: 0; }
+
+    /* ── Chat area ── */
+    .chat-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 280px;
+      background: var(--white);
+    }
+    .chat-area::-webkit-scrollbar { width: 5px; }
+    .chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .empty-state {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 10px;
+      color: var(--text-soft);
+    }
+    .empty-icon { font-size: 36px; opacity: 0.4; }
+    .empty-text { font-size: 13.5px; opacity: 0.6; }
+
+    .bubble-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      animation: slideUp 0.2s ease forwards;
+    }
+    .bubble-row.user { flex-direction: row-reverse; }
+
+    .avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .avatar.bot {
+      background: linear-gradient(135deg, #1e3a5f, #334155);
+      box-shadow: 0 2px 8px rgba(30,58,95,0.25);
+    }
+    .avatar.user-av {
+      background: linear-gradient(135deg, #92400e, #b45309);
+    }
+
+    .bubble {
+      max-width: 74%;
+      padding: 10px 14px;
+      border-radius: 4px 16px 16px 16px;
+      font-size: 14px;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .bubble.bot {
+      background: var(--slate-bg);
+      color: var(--text);
+      border: 1px solid var(--border-lt);
+      border-radius: 4px 16px 16px 16px;
+    }
+    .bubble.user {
+      background: linear-gradient(135deg, #1e3a5f, #2d4a6f);
+      color: #fff;
+      border-radius: 16px 4px 16px 16px;
+      box-shadow: 0 3px 12px rgba(30,58,95,0.20);
+    }
+
+    .file-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 11.5px;
+      margin-bottom: 6px;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .typing-dots {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      padding: 12px 14px;
+    }
+    .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--steel-lt);
+      animation: bounce 1.1s ease infinite;
+    }
+    .dot:nth-child(2) { animation-delay: 0.18s; }
+    .dot:nth-child(3) { animation-delay: 0.36s; }
+
+    /* ── File attach preview ── */
+    .attach-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--navy-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 12.5px;
+      color: var(--navy);
+      font-weight: 600;
+      margin: 8px 20px 0;
+    }
+    .attach-chip button {
+      background: none; border: none; cursor: pointer;
+      color: var(--steel-lt); font-size: 16px; line-height: 1;
+      padding: 0 2px;
+    }
+
+    /* ── Input bar ── */
+    .input-bar {
+      padding: 12px 16px 16px;
+      border-top: 1px solid var(--border-lt);
+      background: var(--slate-bg);
+    }
+    .input-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 9px;
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 8px 10px;
+      transition: border-color 0.2s;
+    }
+    .input-row:focus-within {
+      border-color: var(--navy-lt);
+      box-shadow: 0 0 0 3px rgba(30,58,95,0.06);
+    }
+    .attach-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--steel-lt);
+      padding: 5px;
+      border-radius: 8px;
+      display: flex; align-items: center;
+      transition: color 0.15s, background 0.15s;
+      flex-shrink: 0;
+    }
+    .attach-btn:hover {
+      color: var(--navy);
+      background: var(--navy-bg);
+    }
+    #chat-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: none;
+      resize: none;
+      line-height: 1.5;
+      padding: 4px 0;
+      max-height: 110px;
+      overflow-y: auto;
+    }
+    #chat-input::placeholder { color: var(--steel-lt); }
+    .send-btn {
+      background: linear-gradient(135deg, #1e3a5f, #2d4a6f);
+      border: none;
+      border-radius: 10px;
+      padding: 9px 11px;
+      cursor: pointer;
+      color: #fff;
+      display: flex; align-items: center;
+      flex-shrink: 0;
+      transition: all 0.15s;
+      box-shadow: 0 3px 10px rgba(30,58,95,0.25);
+    }
+    .send-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, #162d4d, #1e3a5f);
+      transform: translateY(-1px);
+      box-shadow: 0 5px 14px rgba(30,58,95,0.30);
+    }
+    .send-btn:disabled {
+      background: var(--border);
+      color: var(--steel-lt);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+    .input-footer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--steel-lt);
+      margin-top: 8px;
+    }
+
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-5px); }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 540px) {
+      .quick-cols { grid-template-columns: 1fr; }
+      .bubble { max-width: 88%; }
+      .header-badge { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-top">
+      <div class="header-icon">📊</div>
+      <div>
+        <div class="header-title">Management Assistant</div>
+        <div class="header-subtitle">Based on the OpenStax textbook Principles of Management</div>
+      </div>
+      <div class="header-badge">SOCRATIC MODE</div>
+    </div>
+    <div class="header-desc">
+      I'm here to help you think through management concepts, work through case studies, and build problem-solving skills. I won't do your work for you, but I will guide you toward answers.
+    </div>
+  </div>
+
+  <!-- Chapter Selector -->
+  <div class="chapter-panel">
+    <div class="chapter-label">Select a Chapter for Context</div>
+    <div class="chapter-select-row">
+      <select class="chapter-select" id="chapter-select">
+        <option value="0">No specific chapter (general questions)</option>
+        <option value="1">Ch 1 — Management &amp; Organizations</option>
+        <option value="2">Ch 2 — Managerial Decision-Making</option>
+        <option value="3">Ch 3 — The History of Management</option>
+        <option value="4">Ch 4 — External &amp; Internal Environments</option>
+        <option value="5">Ch 5 — Ethics, Corporate Responsibility &amp; Sustainability</option>
+        <option value="6">Ch 6 — International Management</option>
+        <option value="7">Ch 7 — Entrepreneurship &amp; Small Business</option>
+        <option value="8">Ch 8 — Strategic Analysis &amp; Competitive Environment</option>
+        <option value="9">Ch 9 — Strategic Management</option>
+        <option value="10">Ch 10 — Organizational Design &amp; Change</option>
+        <option value="11">Ch 11 — Human Resource Management</option>
+        <option value="12">Ch 12 — Diversity in Organizations</option>
+        <option value="13">Ch 13 — Leadership</option>
+        <option value="14">Ch 14 — Work Motivation</option>
+        <option value="15">Ch 15 — Managing Teams</option>
+        <option value="16">Ch 16 — Managerial Communication</option>
+        <option value="17">Ch 17 — Organizational Planning &amp; Controlling</option>
+        <option value="18">Ch 18 — Technology &amp; Innovation Management</option>
+      </select>
+    </div>
+    <div class="chapter-hint">Selecting a chapter lets me draw on textbook content to guide your learning.</div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-panel">
+    <div class="quick-label">Try asking me about:</div>
+    <div class="quick-cols">
+      <div class="quick-group concepts">
+        <h4>📖 Concepts &amp; Theory</h4>
+        <button class="quick-btn concepts" onclick="quickAsk('Can you help me understand a key concept from this chapter?')">
+          <span class="btn-icon">💡</span> Explore a concept
+        </button>
+        <button class="quick-btn concepts" onclick="quickAsk('Can you create a study guide for the selected chapter?')">
+          <span class="btn-icon">📋</span> Create a study guide
+        </button>
+        <button class="quick-btn concepts" onclick="quickAsk('Can you help me compare two management theories or approaches?')">
+          <span class="btn-icon">⚖️</span> Compare ideas
+        </button>
+      </div>
+      <div class="quick-group practice">
+        <h4>🔍 Practice &amp; Application</h4>
+        <button class="quick-btn practice" onclick="quickAsk('Give me a practice quiz on the selected chapter.')">
+          <span class="btn-icon">✏️</span> Practice quiz
+        </button>
+        <button class="quick-btn practice" onclick="quickAsk('Give me a realistic business scenario to work through based on this chapter.')">
+          <span class="btn-icon">🏢</span> Case scenario
+        </button>
+        <button class="quick-btn practice" onclick="quickAsk('Can you help me think through an ethical decision-making scenario related to this chapter?')">
+          <span class="btn-icon">🧭</span> Ethics scenario
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- File chip (shown when file attached) -->
+  <div id="attach-preview" class="attach-chip" style="display:none;">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+    <span id="attach-name"></span>
+    <button onclick="clearAttach()">×</button>
+  </div>
+
+  <!-- Chat -->
+  <div class="chat-area" id="chat-area">
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon">💬</div>
+      <div class="empty-text">Select a chapter and ask a question, or choose a topic above to get started.</div>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="input-bar">
+    <div class="input-row">
+      <input type="file" id="file-input" accept=".txt,.pdf,.doc,.docx,.md" style="display:none" onchange="handleFile(event)" />
+      <button class="attach-btn" onclick="document.getElementById('file-input').click()" title="Attach a draft or file">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+        </svg>
+      </button>
+      <textarea id="chat-input" rows="1" placeholder="Ask me anything about management concepts…"
+        onkeydown="handleKey(event)"
+        oninput="autoResize(this)"></textarea>
+      <button class="send-btn" id="send-btn" onclick="sendMessage()" disabled>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22,2 15,22 11,13 2,9"/>
+        </svg>
+      </button>
+    </div>
+    <div class="input-footer">
+      This assistant uses the Socratic method — it guides your thinking, not your answers. It will not discuss grades.
+    </div>
+  </div>
+</div>
+
+<script src="chapters.js"></script>
+<script>
+// ── Config ──────────────────────────────────────────────────────────────────
+const WORKER_URL = "YOUR_CLOUDFLARE_WORKER_URL_HERE";
+
+// ── System Prompt ────────────────────────────────────────────────────────────
+const BASE_SYSTEM_PROMPT = `You are a Socratic tutoring assistant for an undergraduate college course in Principles of Management. You help students learn and understand management concepts using the Socratic method: you guide students to discover answers through thoughtful questioning rather than providing direct answers.
+
+COURSE: Principles of Management (undergraduate business course)
+TEXTBOOK: Principles of Management — OpenStax (Rice University, CC-BY 4.0)
+AVAILABLE CHAPTERS: 1 (Management & Organizations), 2 (Managerial Decision-Making), 3 (The History of Management), 4 (External & Internal Environments), 5 (Ethics, Corporate Responsibility & Sustainability), 6 (International Management), 7 (Entrepreneurship & Small Business), 8 (Strategic Analysis & Competitive Environment), 9 (Strategic Management), 10 (Organizational Design & Change), 11 (Human Resource Management), 12 (Diversity in Organizations), 13 (Leadership), 14 (Work Motivation), 15 (Managing Teams), 16 (Managerial Communication), 17 (Organizational Planning & Controlling), 18 (Technology & Innovation Management)
+
+BEHAVIORAL RULES:
+1. SOCRATIC APPROACH: Never directly answer content or concept questions. Instead:
+   - Ask guiding questions that help students reason through concepts
+   - Encourage critical thinking and self-explanation
+   - Help students compare ideas or theories by prompting them to articulate differences
+   - Use examples, analogies, or scenarios to deepen understanding
+   - Offer feedback that prompts revision or refinement of their ideas
+   - Break complex topics into manageable steps
+   - Emphasize ethical decision-making in business contexts
+   Example: If asked "What is strategic management?" respond with something like: "Think about a company you admire. What steps do you think its leaders take to stay competitive? How might they decide where to focus their energy and resources?"
+
+2. STUDY AIDS: You may create:
+   - Study guides summarizing key topics and guiding questions
+   - Practice quizzes (multiple choice, short answer, scenario-based)
+   - Hypothetical business scenarios and case studies illustrating concepts
+   - Step-by-step reasoning prompts
+   - Concept maps (in text form)
+   - Feedback on drafts or ideas
+   - Visualizations or frameworks that help explain concepts
+   When creating study aids, still use a guiding approach — pose questions alongside summaries to encourage active learning.
+
+3. CASE STUDIES & SCENARIOS: When asked for scenarios or case studies:
+   - Create realistic, detailed business situations
+   - Include multiple stakeholders with different perspectives
+   - Embed ethical dimensions when appropriate
+   - Ask the student to analyze the situation rather than providing the analysis
+   - Connect scenarios to specific textbook concepts
+
+4. GRADES: NEVER discuss, speculate about, or help calculate grades. Respond: "I'm not able to discuss grades — please reach out to your instructor directly."
+
+5. NO CHEATING: Never complete assignments, write papers, answer exam/quiz questions, or write discussion posts for students. Say: "My role is to help you learn, not do the work for you — but I'm happy to guide you through the thinking."
+
+6. DRAFT FEEDBACK: If a student shares a draft, ask what they're trying to argue, point out unclear areas with questions, and guide their thinking — never rewrite for them.
+
+7. TONE: Professional, patient, supportive, and direct. No "Great question!" or other empty compliments. Treat students as capable adults. Maintain academic humility — ask for clarification when needed. Encourage learning rather than giving answers.
+
+8. SCOPE: Stay focused on management and business topics covered in the textbook. If a question falls outside the course scope, say so.
+
+9. ETHICAL EMPHASIS: When relevant, prompt students to consider the ethical implications of management decisions. Encourage them to think about stakeholder impacts, social responsibility, and long-term consequences.
+
+Your goal is to help students become self-guided learners who can think critically about management concepts and apply them to real-world business situations.`;
+
+function buildSystemPrompt() {
+  const chapterNum = parseInt(document.getElementById("chapter-select").value);
+  let prompt = BASE_SYSTEM_PROMPT;
+
+  if (chapterNum > 0 && typeof CHAPTERS !== 'undefined' && CHAPTERS[chapterNum]) {
+    const ch = CHAPTERS[chapterNum];
+    prompt += `\n\nThe student is currently studying Chapter ${chapterNum}: ${ch.title}. Use the following textbook content as your knowledge base to guide the student. Do NOT quote the textbook directly to students — instead, use it to inform your Socratic questions and guidance.\n\n--- TEXTBOOK CONTENT: CHAPTER ${chapterNum} ---\n${ch.text}\n--- END TEXTBOOK CONTENT ---`;
+  }
+
+  return prompt;
+}
+
+let conversationHistory = [];
+let attachedFile = null;
+let attachedFileContent = "";
+let isLoading = false;
+
+// ── File handling ─────────────────────────────────────────────────────────────
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  attachedFile = file;
+  const reader = new FileReader();
+  reader.onload = ev => { attachedFileContent = ev.target.result; };
+  reader.readAsText(file);
+  document.getElementById("attach-name").textContent = file.name;
+  document.getElementById("attach-preview").style.display = "inline-flex";
+  updateSendBtn();
+}
+
+function clearAttach() {
+  attachedFile = null;
+  attachedFileContent = "";
+  document.getElementById("attach-preview").style.display = "none";
+  document.getElementById("file-input").value = "";
+  updateSendBtn();
+}
+
+// ── Input helpers ─────────────────────────────────────────────────────────────
+function autoResize(el) {
+  el.style.height = "auto";
+  el.style.height = Math.min(el.scrollHeight, 110) + "px";
+  updateSendBtn();
+}
+
+function updateSendBtn() {
+  const val = document.getElementById("chat-input").value.trim();
+  document.getElementById("send-btn").disabled = isLoading || (!val && !attachedFile);
+}
+
+function handleKey(e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function quickAsk(text) {
+  document.getElementById("chat-input").value = text;
+  autoResize(document.getElementById("chat-input"));
+  sendMessage();
+}
+
+// ── Render helpers ────────────────────────────────────────────────────────────
+function hideEmpty() {
+  const e = document.getElementById("empty-state");
+  if (e) e.style.display = "none";
+}
+
+function appendBubble(role, content, fileName) {
+  hideEmpty();
+  const area = document.getElementById("chat-area");
+
+  const row = document.createElement("div");
+  row.className = "bubble-row " + (role === "user" ? "user" : "");
+
+  const av = document.createElement("div");
+  av.className = "avatar " + (role === "user" ? "user-av" : "bot");
+  av.textContent = role === "user" ? "👤" : "📊";
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble " + (role === "user" ? "user" : "bot");
+
+  if (fileName) {
+    const chip = document.createElement("div");
+    chip.className = "file-chip";
+    chip.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg> ${fileName}`;
+    bubble.appendChild(chip);
+  }
+
+  const text = document.createElement("span");
+  text.textContent = content;
+  bubble.appendChild(text);
+
+  row.appendChild(av);
+  row.appendChild(bubble);
+  area.appendChild(row);
+  area.scrollTop = area.scrollHeight;
+  return bubble;
+}
+
+function showTyping() {
+  hideEmpty();
+  const area = document.getElementById("chat-area");
+  const row = document.createElement("div");
+  row.className = "bubble-row";
+  row.id = "typing-row";
+
+  const av = document.createElement("div");
+  av.className = "avatar bot";
+  av.textContent = "📊";
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble bot";
+  bubble.innerHTML = '<div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+
+  row.appendChild(av);
+  row.appendChild(bubble);
+  area.appendChild(row);
+  area.scrollTop = area.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById("typing-row");
+  if (t) t.remove();
+}
+
+// ── Send ──────────────────────────────────────────────────────────────────────
+async function sendMessage() {
+  const inputEl = document.getElementById("chat-input");
+  const text = inputEl.value.trim();
+  if ((!text && !attachedFile) || isLoading) return;
+
+  isLoading = true;
+  updateSendBtn();
+
+  // Show user bubble
+  const displayText = text || "(File attached)";
+  appendBubble("user", displayText, attachedFile?.name);
+
+  // Build API content
+  let apiContent = text;
+  if (attachedFile && attachedFileContent) {
+    apiContent = (text ? text + "\n\n" : "") + `[Attached file: ${attachedFile.name}]\n\n${attachedFileContent}`;
+  }
+
+  conversationHistory.push({ role: "user", content: apiContent || displayText });
+
+  // Clear inputs
+  inputEl.value = "";
+  inputEl.style.height = "auto";
+  clearAttach();
+  updateSendBtn();
+
+  showTyping();
+
+  try {
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1024,
+        system: buildSystemPrompt(),
+        messages: conversationHistory
+      })
+    });
+
+    const data = await response.json();
+    removeTyping();
+
+    const reply = data.content?.map(b => b.text || "").join("") ||
+      "I'm sorry, I had trouble generating a response. Please try again.";
+
+    conversationHistory.push({ role: "assistant", content: reply });
+    appendBubble("assistant", reply);
+  } catch (err) {
+    removeTyping();
+    appendBubble("assistant", "I'm having trouble connecting right now. Please check your connection and try again.");
+  }
+
+  isLoading = false;
+  updateSendBtn();
+}
+
+// Init send button state
+document.getElementById("chat-input").addEventListener("input", updateSendBtn);
+</script>
+</body>
+</html>
